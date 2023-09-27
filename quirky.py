@@ -5,7 +5,7 @@ import argparse
 def readQRCodeFromImage(filename):
     img = cv2.imread(filename)
     detect = cv2.QRCodeDetector()
-    return str(detect.detectAndDecodeMulti(img)[1]).strip("(',')")
+    return str(detect.detectAndDecode(img)[1]).strip("(',')")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
