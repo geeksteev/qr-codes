@@ -2,16 +2,10 @@ import cv2
 import qrcode
 import argparse
 
-def generateQRCode(data, filename):
-    img = qrcode.make(data)
-    img.save(filename)
-    return img
-
 def readQRCodeFromImage(filename):
     img = cv2.imread(filename)
     detect = cv2.QRCodeDetector()
     return str(detect.detectAndDecodeMulti(img)[1]).strip("(',')")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
