@@ -7,6 +7,23 @@ def readQRCodeFromImage(filename):
     detect = cv2.QRCodeDetector()
     return str(detect.detectAndDecode(img)[1]).strip("(',')")
 
+def readQRCodeFromVideo():
+    cam = cv2.VideoCapture(0)
+    detector = cv2.QRCodeDetector()
+    
+    while True:
+        _, img = cam.read()
+        data, bbox, _ = detector.detectAndDecode(img)
+        if data:
+            print("QR Code Detected:  ", data)
+        if cv2.waitKey(1) == ord("Q"):
+            break
+    
+    cam.release()
+    cv2.destroyAllWindows()
+    return
+    
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-g', '--generate', help='Generate a QR Code', required=False)
@@ -17,4 +34,4 @@ if __name__ == "__main__":
     
 args = parser.parse_args()
 
-readQRCodeFromImage(args.file)
+readQRCodeFromVideo()
