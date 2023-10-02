@@ -1,37 +1,45 @@
 import cv2 
-import qrcode
+import datetime
+import logging
 import argparse
 
-def readQRCodeFromImage(filename):
-    img = cv2.imread(filename)
-    detect = cv2.QRCodeDetector()
-    return str(detect.detectAndDecode(img)[1]).strip("(',')")
+# data = "https://en.m.wikipedia.org"
+# log = "quirky.log"
+# src_file = ".tests/investopedia.png"
+# timestamp = str(str(datetime.datetime.now()).split(".")[0] + " " + data)
 
-def readQRCodeFromVideo():
+logging.basicConfig(filename="quirky.log", level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S', filemode='a')
+logger = logging.getLogger()
+
+def readQRCodeFromImage(src_file):
+    img = cv2.imread(src_file)
+    detect = cv2.QRCodeDetector()
+    write_log(str(detect.detectAndDecode(img)[0]).strip("(',')"))
+    return 
+
+def readQRCodeFromCamera():
     cam = cv2.VideoCapture(0)
-    detector = cv2.QRCodeDetector()
+    detect = cv2.QRCodeDetector()
     
     while True:
         _, img = cam.read()
-        data, bbox, _ = detector.detectAndDecode(img)
+        data, bbox, _ = detect.detectAndDecode(img)
         if data:
-            print("QR Code Detected:  ", data)
-        if cv2.waitKey(1) == ord("Q"):
-            break
+            write_log(str(detect.detectAndDecode(img)[0]).strip("(',')"))
+            if cv2.waitKey(1) == ord("Q"):
+                break
     
     cam.release()
     cv2.destroyAllWindows()
     return
-    
+
+def write_log(log_entry):
+    logging.info(log_entry) 
+    return
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-g', '--generate', help='Generate a QR Code', required=False)
-    parser.add_argument('-r', '--read', help='Read a QR Code', required=False)
-    parser.add_argument('-f', '--file', help='Read a QR Code', required=False)
-    parser.add_argument('-u', '--url', help='Enter the URL for the QR code', required=False)
-    parser.add_argument('-o', '--output', help='Enter the output filename for the QR code image', required=False)
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    child_parser = argparse.ArgumentParser(parents=[parent_parser])
     
-args = parser.parse_args()
-
-readQRCodeFromVideo()
+  
+readQRCodeFromCamera()
