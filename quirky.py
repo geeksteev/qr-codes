@@ -3,11 +3,6 @@ import datetime
 import logging
 import argparse
 
-# data = "https://en.m.wikipedia.org"
-# log = "quirky.log"
-# src_file = ".tests/investopedia.png"
-# timestamp = str(str(datetime.datetime.now()).split(".")[0] + " " + data)
-
 logging.basicConfig(filename="quirky.log", level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S', filemode='a')
 logger = logging.getLogger()
 
