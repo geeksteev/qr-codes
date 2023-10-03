@@ -1,5 +1,5 @@
 import cv2 
-import datetime
+import time
 import logging
 import argparse
 
@@ -9,8 +9,12 @@ logger = logging.getLogger()
 def readQRCodeFromImage(src_file):
     img = cv2.imread(src_file)
     detect = cv2.QRCodeDetector()
-    write_log(str(detect.detectAndDecode(img)[0]).strip("(',')"))
-    return 
+    data, bbox, _ = detect.detectAndDecode(img)
+    if data:
+        write_log(str(detect.detectAndDecode(img)[0]).strip("(',')"))
+        print("QR code written to log: " + data)
+    else:
+        print("ERROR: No QR code found in " + args.file)
 
 def readQRCodeFromCamera():
     cam = cv2.VideoCapture(0)
@@ -21,8 +25,9 @@ def readQRCodeFromCamera():
         data, bbox, _ = detect.detectAndDecode(img)
         if data:
             write_log(str(detect.detectAndDecode(img)[0]).strip("(',')"))
-            if cv2.waitKey(1) == ord("Q"):
-                break
+            print("QR code written to log: " + data)
+        if cv2.waitKey(1) == ord("Q"):
+            break
     
     cam.release()
     cv2.destroyAllWindows()
@@ -33,8 +38,10 @@ def write_log(log_entry):
     return
 
 if __name__ == "__main__":
-    parent_parser = argparse.ArgumentParser(add_help=False)
-    child_parser = argparse.ArgumentParser(parents=[parent_parser])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", choices=['image', 'stream', 'parse'])
+    parser.add_argument("-f", "--file")
+    parser.add_argument("-o", "--output")
     
-  
-readQRCodeFromCamera()
+    args = parser.parse_args()
+    
